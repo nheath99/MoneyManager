@@ -7,29 +7,43 @@ namespace MoneyManager.Data
 {
     public interface IDataRepository
     {
-        IEnumerable<Account> GetAccounts();
-        IEnumerable<Account> GetAccount(int id);
-        IEnumerable<Account> GetAccountsByAccountType(int accountTypeId);
+        Task<IEnumerable<Account>> GetAccountsAsync();
+        Task<Account> GetAccountAsync(int id);
+        Task<IEnumerable<Account>> GetAccountsByAccountTypeAsync(int accountTypeId);
 
-        void InsertAccount(Account account);
-        void UpdateAccount(Account account);
+        Task<int> InsertAccountAsync(Account account);
+        Task<bool> UpdateAccountAsync(Account account);
+        Task DeleteAccountAsync(int id);
 
-        IEnumerable<Transaction> GetTransactions(int accountId);
-        decimal GetAccountBalance(int accountId);
-        decimal GetAccountBalanceUnreconciled(int accountId);
+        Task<IEnumerable<Transaction>> GetTransactionsAsync(int accountId);
+        Task<int> InsertTransactionAsync(Transaction t);
+        Task<bool> UpdateTransactionAsync(Transaction t);
+        Task DeleteTransactionAsync(int id);
+        Task<decimal> GetAccountBalance(int accountId);
+        Task<decimal> GetAccountBalanceUnreconciledAsync(int accountId);
+        Task<IEnumerable<Transaction>> GetRelatedTransactionsAsync(int repeatingTransactionId);
 
-        IEnumerable<Pension> GetPensions();
-        decimal CurrentPensionValue(int pensionId);
-        IEnumerable<Stock> GetStocks();
-        IEnumerable<RepeatingTransaction> GetRepeatingTransactions(bool onlyActive);
-        IEnumerable<Asset> GetAssets();
+        Task<IEnumerable<Pension>> GetPensionsAsync();
+        Task<decimal> CurrentPensionValueAsync(int pensionId);
+        Task<IEnumerable<Stock>> GetStocksAsync();
+        Task<IEnumerable<RepeatingTransaction>> GetRepeatingTransactionsAsync(bool onlyActive);
 
-        void ProcessRepeatingTransaction(int repeatingTransactionId);
-        void InsertRepeatingTransaction(RepeatingTransaction r);
-        void DeleteRepeatingTransaction(int id);
-        void UpdateRepeatingTransaction(RepeatingTransaction r);
-        void ProcessAllRepeatingTransactions(bool nextPrompt);
+        Task ProcessRepeatingTransactionAsync(int repeatingTransactionId);
+        Task<int> InsertRepeatingTransactionAsync(RepeatingTransaction r);
+        Task<bool> UpdateRepeatingTransactionAsync(RepeatingTransaction r);
+        Task DeleteRepeatingTransactionAsync(int id);        
+        Task ProcessAllRepeatingTransactionsAsync(bool nextPrompt);
 
-        DateTime? GetNextOccurance(RepeatingTransaction r);
+        Task<DateTime?> GetNextOccuranceAsync(RepeatingTransaction r);
+
+        Task<IEnumerable<Asset>> GetAssetsAsync();
+        Task<int> InsertAssetAsync(Asset a);
+        Task<bool> UpdateAssetAsync(Asset a);
+        Task DeleteAssetAsync(int id);
+
+        Task<int> InsertPensionAsync(Pension p);
+        Task<bool> UpdatePensionAsync(Pension p);
+        Task DeletePension(int id);
+        Task<IEnumerable<PensionValuation>> GetPensionValuations(int id, DateTime startDateTime, DateTime endDateTime);
     }
 }

@@ -4,89 +4,170 @@ using System.Linq;
 using System.Threading.Tasks;
 using Dapper;
 using static MoneyManager.Data.RepeatingTransaction;
+using System.Data.SqlClient;
 
 namespace MoneyManager.Data
 {
     public class DataRepository : IDataRepository
     {
-        public IEnumerable<Account> GetAccounts()
+        public DataRepository()
+        {
+
+        }
+
+        public DataRepository(string connectionString)
+        {
+
+        }
+
+        public string ConnectionString { get; private set; }
+
+        public async Task<IEnumerable<Account>> GetAccountsAsync()
+        {
+            using (SqlConnection con = new SqlConnection(ConnectionString))
+            {
+                return await con.QueryAsync<Account>("select a.* from [Accounts] a");
+            }
+        }
+        public async Task<Account> GetAccountAsync(int id)
+        {
+            using (SqlConnection con = new SqlConnection(ConnectionString))
+            {
+                return await con.QuerySingleOrDefaultAsync<Account>("select a.* from [Accounts] a where a.[Id] = @id", new { id });
+            }
+        }
+        public async Task<IEnumerable<Account>> GetAccountsByAccountTypeAsync(int accountTypeId)
+        {
+            using (SqlConnection con = new SqlConnection(ConnectionString))
+            {
+                return await con.QueryAsync<Account>("select a.* from [Accounts] a where a.[AccountTypeId] = @accountTypeId", new { accountTypeId });
+            }
+        }
+
+        public async Task<int> InsertAccountAsync(Account account)
         {
             throw new NotImplementedException();
         }
-        public IEnumerable<Account> GetAccount(int id)
+        public async Task<bool> UpdateAccountAsync(Account account)
         {
             throw new NotImplementedException();
         }
-        public IEnumerable<Account> GetAccountsByAccountType(int accountTypeId)
+        public async Task DeleteAccountAsync(int id)
+        {
+            using (SqlConnection con = new SqlConnection(ConnectionString))
+            {
+                await con.ExecuteAsync("delete from [Accounts] where [Id] = @id", new { id });
+            }
+        }
+
+        public async Task<IEnumerable<Transaction>> GetTransactionsAsync(int accountId)
+        {
+            using (SqlConnection con = new SqlConnection(ConnectionString))
+            {
+                return await con.QueryAsync<Transaction>("select t.* from [Transactions] t where t.[AccountId] = @accountId", new { @accountId });
+            }
+        }
+        public async Task<int> InsertTransactionAsync(Transaction t)
+        {
+            throw new NotImplementedException();
+        }
+        public async Task<bool> UpdateTransactionAsync(Transaction t)
+        {
+            throw new NotImplementedException();
+        }
+        public async Task DeleteTransactionAsync(int id)
+        {
+            using (SqlConnection con = new SqlConnection(ConnectionString))
+            {
+                await con.ExecuteAsync("delete from [Accounts] where [Id] = @id", new { id });
+            }
+        }
+        public async Task<decimal> GetAccountBalance(int accountId)
+        {
+            throw new NotImplementedException();
+        }
+        public async Task<decimal> GetAccountBalanceUnreconciledAsync(int accountId)
+        {
+            throw new NotImplementedException();
+        }
+        public async Task<IEnumerable<Transaction>> GetRelatedTransactionsAsync(int repeatingTransactionId)
         {
             throw new NotImplementedException();
         }
 
-        public void InsertAccount(Account account)
+        public async Task<IEnumerable<Pension>> GetPensionsAsync()
         {
             throw new NotImplementedException();
         }
-        public void UpdateAccount(Account account)
+        public async Task<decimal> CurrentPensionValueAsync(int pensionId)
         {
             throw new NotImplementedException();
         }
-
-        public IEnumerable<Transaction> GetTransactions(int accountId)
+        public async Task<IEnumerable<Stock>> GetStocksAsync()
         {
             throw new NotImplementedException();
         }
-        public decimal GetAccountBalance(int accountId)
+        public async Task<IEnumerable<RepeatingTransaction>> GetRepeatingTransactionsAsync(bool onlyActive)
         {
             throw new NotImplementedException();
         }
-        public decimal GetAccountBalanceUnreconciled(int accountId)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IEnumerable<Pension> GetPensions()
-        {
-            throw new NotImplementedException();
-        }
-        public decimal CurrentPensionValue(int pensionId)
-        {
-            throw new NotImplementedException();
-        }
-        public IEnumerable<Stock> GetStocks()
-        {
-            throw new NotImplementedException();
-        }
-        public IEnumerable<RepeatingTransaction> GetRepeatingTransactions(bool onlyActive)
-        {
-            throw new NotImplementedException();
-        }
-        public IEnumerable<Asset> GetAssets()
+        public async Task<IEnumerable<Asset>> GetAssetsAsync()
         {
             throw new NotImplementedException();
         }
 
-        public void ProcessRepeatingTransaction(int repeatingTransactionId)
+        public async Task ProcessRepeatingTransactionAsync(int repeatingTransactionId)
         {
             throw new NotImplementedException();
         }
-        public void InsertRepeatingTransaction(RepeatingTransaction r)
+        public async Task<int> InsertRepeatingTransactionAsync(RepeatingTransaction r)
         {
             throw new NotImplementedException();
         }
-        public void DeleteRepeatingTransaction(int id)
+        public async Task<bool> UpdateRepeatingTransactionAsync(RepeatingTransaction r)
         {
             throw new NotImplementedException();
         }
-        public void UpdateRepeatingTransaction(RepeatingTransaction r)
+        public async Task DeleteRepeatingTransactionAsync(int id)
         {
             throw new NotImplementedException();
         }
-        public void ProcessAllRepeatingTransactions(bool nextPrompt)
+        public async Task ProcessAllRepeatingTransactionsAsync(bool nextPrompt)
         {
             throw new NotImplementedException();
         }
 
-        public DateTime? GetNextOccurance(RepeatingTransaction r)
+        public async Task<int> InsertAssetAsync(Asset a)
+        {
+            throw new NotImplementedException();
+        }
+        public async Task<bool> UpdateAssetAsync(Asset a)
+        {
+            throw new NotImplementedException();
+        }
+        public async Task DeleteAssetAsync(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<int> InsertPensionAsync(Pension p)
+        {
+            throw new NotImplementedException();
+        }
+        public async Task<bool> UpdatePensionAsync(Pension p)
+        {
+            throw new NotImplementedException();
+        }
+        public async Task DeletePension(int id)
+        {
+            throw new NotImplementedException();
+        }
+        public async Task<IEnumerable<PensionValuation>> GetPensionValuations(int id, DateTime startDateTime, DateTime endDateTime)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<DateTime?> GetNextOccuranceAsync(RepeatingTransaction r)
         {
             if (r.TimesRepeated == 0)
                 return null;
